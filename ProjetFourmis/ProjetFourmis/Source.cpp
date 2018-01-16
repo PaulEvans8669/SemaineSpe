@@ -281,14 +281,22 @@ void Retour_Fourmilière(Fourmi f) {
 	for (int i = 0; i < LARGEUR; i++) {
 		for (int j = 0; j < HAUTEUR; j++){		
 			while (f.X!=XFOURMILIERE && f.Y!=YFOURMILIERE){
-				if (f.X - XFOURMILIERE < 0)
-					f.idOrientation = 3;
-				if (f.X - XFOURMILIERE>0)
-					f.idOrientation = 7;
-				if (f.Y - YFOURMILIERE < 0)
-					f.idOrientation=5;
-				if (f.Y - YFOURMILIERE > 0)
+				if (f.Y - YFOURMILIERE > 0 && f.X - XFOURMILIERE > 0)
+					f.idOrientation = 0;
+				else if (f.Y - YFOURMILIERE > 0 && f.X - XFOURMILIERE < 0)
+					f.idOrientation = 2;
+				else if (f.X - XFOURMILIERE < 0 && f.Y - YFOURMILIERE < 0)
+					f.idOrientation = 4;
+				else if (f.Y - YFOURMILIERE > 0 && f.X - XFOURMILIERE > 0)
+					f.idOrientation = 6;
+				else if (f.Y - YFOURMILIERE > 0)
 					f.idOrientation = 1;
+				else if (f.X - XFOURMILIERE < 0)
+					f.idOrientation = 3;
+				else if (f.Y - YFOURMILIERE < 0)
+					f.idOrientation = 5;
+				else if (f.X - XFOURMILIERE > 0)
+					f.idOrientation = 7;
 			}
 		}
 	}
