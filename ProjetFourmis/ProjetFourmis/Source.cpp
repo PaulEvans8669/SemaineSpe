@@ -194,7 +194,108 @@ void afficheFourmi(Fourmi &f) {
 //============== Logique Fourmi =================|
 
 void orientationAlea(Fourmi&f) {
-	f.idOrientation = rand() % 8;
+	//orientation simple
+	//f.idOrientation = rand() % 8;
+
+
+		/* Distribution 1 */
+
+//plutôt pour les recherches
+
+
+	int position = rand() % 24;
+	int pos2 = rand() % 2;
+	cout << position << endl<< pos2 << endl;
+
+	if (position >= 0 &&  position <= 4) {
+	f.idOrientation =1;
+	}
+	else if (position >= 5 && position <= 11) {
+	if (pos2==0)
+	f.idOrientation = 0;
+	else
+	f.idOrientation = 2;
+	}
+	else if (12 >= position <= 17) {
+	if (pos2 == 0)
+	f.idOrientation = 3;
+	else
+	f.idOrientation = 7;
+	}
+	else if (position >= 18 && position <= 21) {
+	if (pos2 == 0)
+	f.idOrientation = 4;
+	else
+	f.idOrientation = 6;
+	}
+	else if (position == 22 || position == 23) {
+	f.idOrientation = 5;
+	}
+	
+
+		/* Distribution 2 */
+
+//plutôt pour les recherches
+
+
+	int position = rand() % 19;
+	int pos2 = rand() % 2;
+	cout << position << endl << pos2 << endl;
+
+
+	if (position >= 0 && position <= 11) {
+		f.idOrientation = 1;
+	}
+	else if (position >= 12 && position <= 15) {
+		if (pos2 == 0)
+			f.idOrientation = 0;
+		else
+			f.idOrientation = 2;
+	}
+	else if (position <= 16 && position <= 18) {
+		if (pos2 == 0)
+			f.idOrientation = 3;
+		else
+			f.idOrientation = 7;
+	}
+	else if (position == 19) {
+		if (pos2 == 0)
+			f.idOrientation = 4;
+		else
+			f.idOrientation =;
+	}
+
+
+		/* Distribution 3 */
+
+
+	int position = rand() % 16;
+	int pos2 = rand() % 2;
+	cout << position << endl << pos2 << endl;
+
+
+	if (position >= 0 && position <= 11) {
+		f.idOrientation = 1;
+	}
+	else if (position >= 12 && position <= 13) {
+		if (pos2 == 0)
+			f.idOrientation = 0;
+		else
+			f.idOrientation = 2;
+	}
+	else if (position == 14) {
+		if (pos2 == 0)
+			f.idOrientation = 3;
+		else
+			f.idOrientation = 7;
+	}
+	else if (position == 15) {
+		if (pos2 == 0)
+			f.idOrientation = 4;
+		else
+			f.idOrientation = 6;
+
+	}
 }
 
 bool caseValide(Map m,int X, int Y) {
