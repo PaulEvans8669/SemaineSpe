@@ -262,7 +262,7 @@ void orientationAlea(Fourmi&f) {
 		if (pos2 == 0)
 			f.idOrientation = 4;
 		else
-			f.idOrientation =;
+			f.idOrientation = 6;
 	}
 
 
