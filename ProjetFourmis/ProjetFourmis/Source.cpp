@@ -91,14 +91,14 @@ void initialisationSDL() {
 
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		cout << " Echec Ã  lâ€™ouverture ";
+		cout << " Echec à l’ouverture ";
 	}
 
 	TTF_Init();
 	font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 25);
 
 
-	window = SDL_CreateWindow("Simulation Fourmis", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, LARGEUR*TAILLECASE, HAUTEUR*TAILLECASE, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Simulation Fourmis", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, LARGEUR*TAILLECASE*2, HAUTEUR*TAILLECASE, SDL_WINDOW_SHOWN);
 	if (window == NULL) {
 		cout << "erreur ouverture fenetre";
 	}
@@ -122,7 +122,7 @@ void initialisationSDL() {
 	Orientation[6] = loadImage(ecran, chemin);
 	strcpy_s(chemin, "Images/FourmiO.png");
 	Orientation[7] = loadImage(ecran, chemin);
-	
+
 
 }
 
@@ -193,151 +193,307 @@ void afficheFourmi(Fourmi &f) {
 //===============================================|
 //============== Logique Fourmi =================|
 
-void orientationAlea(Fourmi&f) {
-	//orientation simple
-	//f.idOrientation = rand() % 8;
 
-
-		/* Distribution 1 */
-
-//plutÃ´t pour les recherches
-
-
-	int position = rand() % 24;
-	int pos2 = rand() % 2;
-	cout << position << endl<< pos2 << endl;
-
-	if (position >= 0 &&  position <= 4) {
-	f.idOrientation =1;
-	}
-	else if (position >= 5 && position <= 11) {
-	if (pos2==0)
-	f.idOrientation = 0;
-	else
-	f.idOrientation = 2;
-	}
-	else if (12 >= position <= 17) {
-	if (pos2 == 0)
-	f.idOrientation = 3;
-	else
-	f.idOrientation = 7;
-	}
-	else if (position >= 18 && position <= 21) {
-	if (pos2 == 0)
-	f.idOrientation = 4;
-	else
-	f.idOrientation = 6;
-	}
-	else if (position == 22 || position == 23) {
-	f.idOrientation = 5;
-	}
-	
-
-		/* Distribution 2 */
-
-//plutÃ´t pour les recherches
-
-
-	int position = rand() % 19;
-	int pos2 = rand() % 2;
-	cout << position << endl << pos2 << endl;
-
-
-	if (position >= 0 && position <= 11) {
-		f.idOrientation = 1;
-	}
-	else if (position >= 12 && position <= 15) {
-		if (pos2 == 0)
-			f.idOrientation = 0;
-		else
-			f.idOrientation = 2;
-	}
-	else if (position <= 16 && position <= 18) {
-		if (pos2 == 0)
-			f.idOrientation = 3;
-		else
-			f.idOrientation = 7;
-	}
-	else if (position == 19) {
-		if (pos2 == 0)
-			f.idOrientation = 4;
-		else
-			f.idOrientation = 6;
-	}
-
-
-		/* Distribution 3 */
-
-
-	int position = rand() % 16;
-	int pos2 = rand() % 2;
-	cout << position << endl << pos2 << endl;
-
-
-	if (position >= 0 && position <= 11) {
-		f.idOrientation = 1;
-	}
-	else if (position >= 12 && position <= 13) {
-		if (pos2 == 0)
-			f.idOrientation = 0;
-		else
-			f.idOrientation = 2;
-	}
-	else if (position == 14) {
-		if (pos2 == 0)
-			f.idOrientation = 3;
-		else
-			f.idOrientation = 7;
-	}
-	else if (position == 15) {
-		if (pos2 == 0)
-			f.idOrientation = 4;
-		else
-			f.idOrientation = 6;
-
-	}
-}
-
-bool caseValide(Map m,int X, int Y) {
+bool caseValide(Map m, int X, int Y) {
 	if (0 < X && X < LARGEUR && 0 < Y && Y < HAUTEUR && m[Y][X].typeCase != 2) {
 		return true;
 	}
 	return false;
 }
 
-void deplacerFourmi(Fourmi& f, Map m) {
-	if (true) { //si Ã©tat "normal" faire des mouvements alÃ©atoires
-		if (f.idOrientation == 0 && caseValide(m,f.X-1,f.Y-1)) {
-		f.X --;
-		f.Y --;
+int xCaseEnFaceFourmi(Fourmi f) {
+	if (f.idOrientation == 0 || f.idOrientation == 7 || f.idOrientation == 6) {
+		return f.X-1;
 	}
-		else if (f.idOrientation == 1 && caseValide(m, f.X - 1, f.Y - 1)) {
-		f.Y --;
+	if (f.idOrientation == 2 || f.idOrientation == 3 || f.idOrientation == 4) {
+		return f.X+1;
 	}
-		else if (f.idOrientation == 2 && caseValide(m, f.X + 1, f.Y - 1)) {
-		f.X ++;
-		f.Y --;
+	return f.X;
+}
+
+int yCaseEnFaceFourmi(Fourmi f) {
+	if (f.idOrientation == 0 || f.idOrientation == 1 || f.idOrientation == 2) {
+		return f.Y-1;
 	}
-		else if (f.idOrientation == 3 && caseValide(m, f.X + 1, f.Y)) {
-		f.X ++;
+	if (f.idOrientation == 4 || f.idOrientation == 5 || f.idOrientation == 6) {
+		return f.Y+1;
 	}
-		else if (f.idOrientation == 4 && caseValide(m, f.X + 1, f.Y + 1)) {
-		f.X ++;
-		f.Y ++;
+	return f.Y;
+}
+
+void tournerFourmiDroite(Fourmi& f) {
+	if (f.idOrientation == 7) {
+		f.idOrientation = 0;
 	}
-		else if (f.idOrientation == 5 && caseValide(m, f.X, f.Y + 1)) {
-		f.Y ++;
+	else {
+		f.idOrientation++;
 	}
-		else if (f.idOrientation == 6 && caseValide(m, f.X - 1, f.Y + 1)) {
-		f.Y ++;
-		f.X --;
-	}
-		else if (f.idOrientation == 7 && caseValide(m, f.X - 1, f.Y)) {
-			f.X --;
+}
+
+void orientationFourmi(Fourmi&f, Map m, int typeMouvement) {
+	if (f.etat == 0) {
+		//orientation simple
+		if (typeMouvement == 0) {
+			f.idOrientation = rand() % 8;
+		}
+		else if (typeMouvement == 1) {
+			/* Distribution 1 */
+
+			//plutôt pour les recherches
+
+
+			int aleaRotation = rand() % 24;
+
+			if (aleaRotation >= 5 && aleaRotation <= 12) {
+				if (rand() % 2) {
+					f.idOrientation++;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation--;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+
+				}
+			}
+			else if (13 >= aleaRotation <= 18) {
+				if (rand() % 2){
+					f.idOrientation+=2;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation-=2;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
+			else if (aleaRotation >= 19 && aleaRotation <= 22) {
+				if (rand() % 2) {
+					f.idOrientation += 3;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation -= 3;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
+			else if (aleaRotation == 23) {
+				if (rand() % 2) {
+					f.idOrientation += 4;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation -= 4;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
+		}
+		else if (typeMouvement == 2) {
+
+
+			/* Distribution 2 */
+
+
+
+			int aleaRotation = rand() % 19;
+
+
+			if (aleaRotation >= 12 && aleaRotation <= 15) {
+				if (rand() % 2) {
+					f.idOrientation += 1;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation -= 1;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
+			else if (aleaRotation >= 16 && aleaRotation <= 18) {
+				if (rand() % 2) {
+					f.idOrientation += 2;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation -= 2;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
+			else if (aleaRotation == 19) {
+				if (rand() % 2) {
+					f.idOrientation += 3;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation -= 3;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
+		}
+		else if (typeMouvement == 3) {
+
+			/* Distribution 3 */
+
+
+			int aleaRotation = rand() % 19;
+
+
+			if (aleaRotation >= 12 && aleaRotation <= 13) {
+				if (rand() % 2) {
+					f.idOrientation += 1;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation -= 1;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
+			else if (aleaRotation == 14) {
+				if (rand() % 2) {
+					f.idOrientation += 2;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation -= 2;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
+			else if (aleaRotation == 15) {
+				if (rand() % 2) {
+					f.idOrientation += 3;
+					if (f.idOrientation >= 8) {
+						f.idOrientation -= 8;
+					}
+				}
+				else {
+					f.idOrientation -= 3;
+					if (f.idOrientation <= 0) {
+						f.idOrientation += 8;
+					}
+				}
+			}
 		}
 	}
-	else { //sinon, la fourmi est en mode retour Ã  la fourmilliÃ¨re
+	else
+	{
+		if (f.X < XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE) {
+				f.idOrientation = 3;
+				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+					f.idOrientation = 5;
+				}
+		}
+		else if (f.X > XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE) {
+				f.idOrientation = 7;
+				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+					f.idOrientation = 0;
+				}
+		}
+		else if (f.X == XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
+				f.idOrientation = 5;
+				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+					f.idOrientation = 7;
+				}
+		}
+		else if (f.X == XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
+				f.idOrientation = 1;
+				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+					f.idOrientation = 2;
+				}
+		}
+		else if (f.X < XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
+				f.idOrientation = 4;
+				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+					f.idOrientation = 5;
+				}
+		}
+		else if (f.X < XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
+				f.idOrientation = 2;
+				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+					f.idOrientation = 1;
+				}
+		}
+		else if (f.X > XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
+				f.idOrientation = 6;
+				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+					f.idOrientation = 5;
+				}
+		}
+		else if (f.X > XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
+				f.idOrientation = 0;
+				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+					f.idOrientation = 1;
+				}
+		}
+		while (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			tournerFourmiDroite(f);
+		}
+	}
+}
 
+void deplacerFourmi(Fourmi& f, Map m) {
+	 //si état "normal" faire des mouvements aléatoires
+	if (caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+		if (f.idOrientation == 0) {
+			f.X--;
+			f.Y--;
+		}
+		else if (f.idOrientation == 1) {
+			f.Y--;
+		}
+		else if (f.idOrientation == 2) {
+			f.X++;
+			f.Y--;
+		}
+		else if (f.idOrientation == 3) {
+			f.X++;
+		}
+		else if (f.idOrientation == 4) {
+			f.X++;
+			f.Y++;
+		}
+		else if (f.idOrientation == 5) {
+			f.Y++;
+		}
+		else if (f.idOrientation == 6) {
+			f.Y++;
+			f.X--;
+		}
+		else if (f.idOrientation == 7) {
+			f.X--;
+		}
 	}
 }
 
@@ -345,15 +501,16 @@ void initFourmi(Fourmi &f) {
 	f.X = LARGEUR / 2;
 	f.Y = HAUTEUR / 2;
 	f.etat = 0;
+	f.idOrientation = rand() % 8;
 }
 
 void initColonie(Colonie &c) {
 	for (int i = 0; i < NBFOURMI; i++) {
-	initFourmi(c[i]);
+		initFourmi(c[i]);
 	}
 }
 
-void actionNourriture(Fourmi& f,Map m) {
+void actionNourriture(Fourmi& f, Map m) {
 	if (f.etat != 1 || f.quantiteNourriture == 0) {
 		if (m[f.Y][f.X].typeCase == 1 && m[f.Y][f.X].quantiteNourriture != 0) {
 			f.etat = 1;
@@ -369,37 +526,12 @@ void actionNourriture(Fourmi& f,Map m) {
 			}
 		}
 	}
-	else if (f.X == XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE){
+	else if (f.X == XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE) {
 		f.etat = 0;
 		f.quantiteNourriture = 0;
 		QUANTITE_TOTALE_NOURRITURE++;
 		cout << "Nourriture Deposee." << endl;
 		cout << "Quantite totale: " << QUANTITE_TOTALE_NOURRITURE << endl;
-	}
-}
-
-void Retour_FourmiliÃ¨re(Fourmi f) {		
-	for (int i = 0; i < LARGEUR; i++) {
-		for (int j = 0; j < HAUTEUR; j++){		
-			while (f.X!=XFOURMILIERE && f.Y!=YFOURMILIERE){
-				if (f.Y - YFOURMILIERE > 0 && f.X - XFOURMILIERE > 0)
-					f.idOrientation = 0;
-				else if (f.Y - YFOURMILIERE > 0 && f.X - XFOURMILIERE < 0)
-					f.idOrientation = 2;
-				else if (f.X - XFOURMILIERE < 0 && f.Y - YFOURMILIERE < 0)
-					f.idOrientation = 4;
-				else if (f.Y - YFOURMILIERE > 0 && f.X - XFOURMILIERE > 0)
-					f.idOrientation = 6;
-				else if (f.Y - YFOURMILIERE > 0)
-					f.idOrientation = 1;
-				else if (f.X - XFOURMILIERE < 0)
-					f.idOrientation = 3;
-				else if (f.Y - YFOURMILIERE < 0)
-					f.idOrientation = 5;
-				else if (f.X - XFOURMILIERE > 0)
-					f.idOrientation = 7;
-			}
-		}
 	}
 }
 
@@ -412,11 +544,11 @@ void Retour_FourmiliÃ¨re(Fourmi f) {
 int main(int argc, char *argv[]) {
 	srand(time(NULL));
 
-	initialisationSDL();	
-	
+	initialisationSDL();
+
 	Map map;
-	char nomMap[10] = "map0.ppm";
-	int idMap = 0;
+	char nomMap[10] = "map2.ppm";
+	int idMap = 2;
 
 	initMap(map, nomMap, idMap);
 
@@ -424,18 +556,18 @@ int main(int argc, char *argv[]) {
 	initColonie(c);
 
 
-	while(true){
-	dessinMap(map);
-	for (int i = 0; i < NBFOURMI; i++) {
-		orientationAlea(c[i]);
-		afficheFourmi(c[i]);
-		deplacerFourmi(c[i], map);
-	}
-	SDL_RenderPresent(ecran);	
-	for (int i = 0; i < NBFOURMI; i++) {
-		actionNourriture(c[i], map);
-	}
-	SDL_Delay(30);
+	while (true) {
+		dessinMap(map);
+		for (int i = 0; i < NBFOURMI; i++) {
+			orientationFourmi(c[i], map,3);
+			afficheFourmi(c[i]);
+			deplacerFourmi(c[i], map);
+		}
+		SDL_RenderPresent(ecran);
+		for (int i = 0; i < NBFOURMI; i++) {
+			actionNourriture(c[i], map);
+		}
+		SDL_Delay(50);
 	}
 
 
@@ -447,8 +579,8 @@ int main(int argc, char *argv[]) {
 
 		SDL_Event event;
 
-		SDL_WaitEvent(&event);//attente dâ€™un Ã©vÃ¨nement
-		switch (event.type) //test du type dâ€™Ã©vÃ¨nement
+		SDL_WaitEvent(&event);//attente d’un évènement
+		switch (event.type) //test du type d’évènement
 		{
 		case SDL_QUIT: //clic sur la croix de fermeture
 					   //on peut enlever SDL_Delay
@@ -483,15 +615,15 @@ int main(int argc, char *argv[]) {
 	char ***t = NULL;
 	bd_requeteSelect(bd, "select * from map", t, L, C);
 	for (int i = 0; i < L; i++) {
-		for (int j = 0; j < C; j++) {
-			cout << t[i][j] << "|";
-		}
-		cout << endl;
+	for (int j = 0; j < C; j++) {
+	cout << t[i][j] << "|";
+	}
+	cout << endl;
 	}
 	bd_detruireTab(t, L, C);
 	bd_fermer;
 	*/
-	
+
 
 
 	system("pause");

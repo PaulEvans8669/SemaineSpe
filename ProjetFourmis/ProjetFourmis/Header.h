@@ -15,7 +15,7 @@ TTF_Font*font = NULL;
 const int HAUTEUR = 70;
 const int LARGEUR = 70;
 const int TAILLECASE = 8;
-const int NBFOURMI = 500;
+const int NBFOURMI = 50;
 const int XPOSFOURMILLIERE = LARGEUR / 2;
 const int YPOSFOURMILLIERE = HAUTEUR / 2;
 
