@@ -1,0 +1,4 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: Le répertoire intermédiaire (Debug\) contient des fichiers partagés provenant d'un autre projet (ProjetFourmies.vcxproj). Cela peut entraîner un comportement de nettoyage et de régénération incorrect.
+  Source.cpp
+\\iutbg-smbetu.univ-lyon1.fr\homes\bureau\semaine spé\lundi soir\projet\projetfourmis\projetfourmis\source.cpp(258): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
+  ProjetFourmis.vcxproj -> \\iutbg-smbetu.univ-lyon1.fr\homes\Bureau\Semaine Spé\Lundi Soir\Projet\ProjetFourmis\Debug\ProjetFourmis.exe

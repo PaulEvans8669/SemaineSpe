@@ -1,0 +1,6 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: Le répertoire intermédiaire (Debug\) contient des fichiers partagés provenant d'un autre projet (ProjetFourmies.vcxproj). Cela peut entraîner un comportement de nettoyage et de régénération incorrect.
+  Ignoré... (aucune modification pertinente détectée)
+  fonctionsBD.cpp
+  config_sdl.cpp
+  Source.cpp
+  ProjetFourmies.vcxproj -> \\iutbg-smbetu.univ-lyon1.fr\homes\Bureau\Semaine Spé\Projet\ProjetFourmies\Debug\ProjetFourmis.exe
