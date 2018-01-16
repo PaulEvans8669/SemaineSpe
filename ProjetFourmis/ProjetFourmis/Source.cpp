@@ -91,7 +91,7 @@ void initialisationSDL() {
 
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		cout << " Echec à l’ouverture ";
+		cout << " Echec Ã  lâ€™ouverture ";
 	}
 
 	TTF_Init();
@@ -205,7 +205,7 @@ bool caseValide(Map m,int X, int Y) {
 }
 
 void deplacerFourmi(Fourmi& f, Map m) {
-	if (true) { //si état "normal" faire des mouvements aléatoires
+	if (true) { //si Ã©tat "normal" faire des mouvements alÃ©atoires
 		if (f.idOrientation == 0 && caseValide(m,f.X-1,f.Y-1)) {
 		f.X --;
 		f.Y --;
@@ -235,7 +235,7 @@ void deplacerFourmi(Fourmi& f, Map m) {
 			f.X --;
 		}
 	}
-	else { //sinon, la fourmi est en mode retour à la fourmillière
+	else { //sinon, la fourmi est en mode retour Ã  la fourmilliÃ¨re
 
 	}
 }
@@ -274,6 +274,23 @@ void actionNourriture(Fourmi& f,Map m) {
 		QUANTITE_TOTALE_NOURRITURE++;
 		cout << "Nourriture Deposee." << endl;
 		cout << "Quantite totale: " << QUANTITE_TOTALE_NOURRITURE << endl;
+	}
+}
+
+void Retour_FourmiliÃ¨re(Fourmi f) {		
+	for (int i = 0; i < LARGEUR; i++) {
+		for (int j = 0; j < HAUTEUR; j++){		
+			while (f.X!=XFOURMILIERE && f.Y!=YFOURMILIERE){
+				if (f.X - XFOURMILIERE < 0)
+					f.idOrientation = 3;
+				if (f.X - XFOURMILIERE>0)
+					f.idOrientation = 7;
+				if (f.Y - YFOURMILIERE < 0)
+					f.idOrientation=5;
+				if (f.Y - YFOURMILIERE > 0)
+					f.idOrientation = 1;
+			}
+		}
 	}
 }
 
@@ -321,8 +338,8 @@ int main(int argc, char *argv[]) {
 
 		SDL_Event event;
 
-		SDL_WaitEvent(&event);//attente d’un évènement
-		switch (event.type) //test du type d’évènement
+		SDL_WaitEvent(&event);//attente dâ€™un Ã©vÃ¨nement
+		switch (event.type) //test du type dâ€™Ã©vÃ¨nement
 		{
 		case SDL_QUIT: //clic sur la croix de fermeture
 					   //on peut enlever SDL_Delay
