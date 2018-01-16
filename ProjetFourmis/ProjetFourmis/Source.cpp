@@ -194,8 +194,7 @@ void afficheFourmi(Fourmi &f) {
 //============== Logique Fourmi =================|
 
 void orientationAlea(Fourmi&f) {
-	int numDir = rand() % 8;
-	f.idOrientation = numDir;
+	f.idOrientation = rand() % 8;
 }
 
 bool caseValide(Map m,int X, int Y) {
@@ -206,33 +205,38 @@ bool caseValide(Map m,int X, int Y) {
 }
 
 void deplacerFourmi(Fourmi& f, Map m) {
-	if (f.idOrientation == 0 && caseValide(m,f.X-1,f.Y-1)) {
+	if (true) { //si état "normal" faire des mouvements aléatoires
+		if (f.idOrientation == 0 && caseValide(m,f.X-1,f.Y-1)) {
 		f.X --;
 		f.Y --;
 	}
-	else if (f.idOrientation == 1 && caseValide(m, f.X - 1, f.Y - 1)) {
+		else if (f.idOrientation == 1 && caseValide(m, f.X - 1, f.Y - 1)) {
 		f.Y --;
 	}
-	else if (f.idOrientation == 2 && caseValide(m, f.X + 1, f.Y - 1)) {
+		else if (f.idOrientation == 2 && caseValide(m, f.X + 1, f.Y - 1)) {
 		f.X ++;
 		f.Y --;
 	}
-	else if (f.idOrientation == 3 && caseValide(m, f.X + 1, f.Y)) {
+		else if (f.idOrientation == 3 && caseValide(m, f.X + 1, f.Y)) {
 		f.X ++;
 	}
-	else if (f.idOrientation == 4 && caseValide(m, f.X + 1, f.Y + 1)) {
+		else if (f.idOrientation == 4 && caseValide(m, f.X + 1, f.Y + 1)) {
 		f.X ++;
 		f.Y ++;
 	}
-	else if (f.idOrientation == 5 && caseValide(m, f.X, f.Y + 1)) {
+		else if (f.idOrientation == 5 && caseValide(m, f.X, f.Y + 1)) {
 		f.Y ++;
 	}
-	else if (f.idOrientation == 6 && caseValide(m, f.X - 1, f.Y + 1)) {
+		else if (f.idOrientation == 6 && caseValide(m, f.X - 1, f.Y + 1)) {
 		f.Y ++;
 		f.X --;
 	}
-	else if (f.idOrientation == 7 && caseValide(m, f.X - 1, f.Y)) {
-		f.X --;
+		else if (f.idOrientation == 7 && caseValide(m, f.X - 1, f.Y)) {
+			f.X --;
+		}
+	}
+	else { //sinon, la fourmi est en mode retour à la fourmillière
+
 	}
 }
 
@@ -248,6 +252,31 @@ void initColonie(Colonie &c) {
 	}
 }
 
+void actionNourriture(Fourmi& f,Map m) {
+	if (f.etat != 1 || f.quantiteNourriture == 0) {
+		if (m[f.Y][f.X].typeCase == 1 && m[f.Y][f.X].quantiteNourriture != 0) {
+			f.etat = 1;
+			f.quantiteNourriture = 1;
+			m[f.Y][f.X].quantiteNourriture--;
+			cout << "Nourriture recoltee." << endl;
+			if (m[f.Y][f.X].quantiteNourriture == 0) {
+				m[f.Y][f.X].typeCase = 0;
+				m[f.Y][f.X].R = 0;
+				m[f.Y][f.X].G = 128;
+				m[f.Y][f.X].B = 0;
+				cout << "Nourriture Epuisee en (" << f.Y << ";" << f.X << ")." << endl;
+			}
+		}
+	}
+	else if (f.X == XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE){
+		f.etat = 0;
+		f.quantiteNourriture = 0;
+		QUANTITE_TOTALE_NOURRITURE++;
+		cout << "Nourriture Deposee." << endl;
+		cout << "Quantite totale: " << QUANTITE_TOTALE_NOURRITURE << endl;
+	}
+}
+
 //============== Logique Fourmi =================|
 //===============================================|
 
@@ -259,25 +288,28 @@ int main(int argc, char *argv[]) {
 
 	initialisationSDL();	
 	
-	Map map2;
-	char nomMap[10] = "map2.ppm";
-	int idMap = 2;
+	Map map;
+	char nomMap[10] = "map0.ppm";
+	int idMap = 0;
 
-	initMap(map2, nomMap, idMap);
+	initMap(map, nomMap, idMap);
 
 	Colonie c;
 	initColonie(c);
 
 
 	while(true){
-	dessinMap(map2);
+	dessinMap(map);
 	for (int i = 0; i < NBFOURMI; i++) {
 		orientationAlea(c[i]);
 		afficheFourmi(c[i]);
-		deplacerFourmi(c[i], map2);
+		deplacerFourmi(c[i], map);
+	}
+	SDL_RenderPresent(ecran);	
+	for (int i = 0; i < NBFOURMI; i++) {
+		actionNourriture(c[i], map);
 	}
 	SDL_Delay(30);
-	SDL_RenderPresent(ecran);
 	}
 
 
@@ -299,7 +331,7 @@ int main(int argc, char *argv[]) {
 		case SDL_MOUSEBUTTONUP:
 			int posLig = event.button.y / TAILLECASE;
 			int posCol = event.button.x / TAILLECASE;
-			Case c = map2[posLig][posCol];
+			Case c = map[posLig][posCol];
 			afficheDonneesCase(c);
 
 

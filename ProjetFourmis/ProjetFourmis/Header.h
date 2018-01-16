@@ -15,7 +15,12 @@ TTF_Font*font = NULL;
 const int HAUTEUR = 70;
 const int LARGEUR = 70;
 const int TAILLECASE = 8;
-const int NBFOURMI = 1000;
+const int NBFOURMI = 500;
+const int XPOSFOURMILLIERE = LARGEUR / 2;
+const int YPOSFOURMILLIERE = HAUTEUR / 2;
+
+int QUANTITE_TOTALE_NOURRITURE = 0;
+
 
 SDL_Texture* Orientation[8];
 
@@ -36,6 +41,7 @@ typedef struct Fourmi {
 	int Y;
 	int etat; // 0 = Normal, 1 = Retour fourmillière
 	int idOrientation;// NO=0, N=1, NE=2, E=3, SE=4, S=5, SO=6, O=7
+	int quantiteNourriture;
 } Fourmi;
 
 typedef Fourmi Colonie[NBFOURMI];
