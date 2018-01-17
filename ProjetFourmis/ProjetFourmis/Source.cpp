@@ -82,7 +82,6 @@ void initMap(Map m, char* nomMap, int idMap) {
 }
 
 
-
 //================ Gestion Map ==================|
 //===============================================|
 //=================== SDL =======================|
@@ -149,7 +148,7 @@ void dessinCase(Case&c) {
 	int R = c.R;
 	int G = c.G;
 	int B = c.B;
-	//DEBUG
+	//DEBUG pour afficher les différents types de cases
 	/*
 	if (c.typeCase == 0) {
 	R = G = B = 255;
@@ -164,7 +163,7 @@ void dessinCase(Case&c) {
 	SDL_RenderFillRect(ecran, &fondCase);
 
 }
-//dessine la map, i.e. l'ensemble des cases
+
 void dessinMap(Map&m) {
 
 	for (int i = 0; i < HAUTEUR; i++) {
@@ -188,6 +187,53 @@ void afficheFourmi(Fourmi &f) {
 	tuile.y = f.Y*TAILLECASE;
 	SDL_RenderCopy(ecran, Orientation[f.idOrientation], NULL, &tuile);
 }
+
+void afficheBaseGraphe() {
+	SDL_Rect fond;
+	fond.x = LARGEUR * TAILLECASE;
+	fond.y = 0;
+	fond.h = HAUTEUR*TAILLECASE;
+	fond.w = LARGEUR*TAILLECASE;
+	SDL_SetRenderDrawColor(ecran, 255, 255, 255, 255);
+	SDL_RenderFillRect(ecran, &fond);
+
+	int XBaseRepere = LARGEUR * TAILLECASE + 20;
+	int YBaseRepere = HAUTEUR * TAILLECASE - 20;
+
+	SDL_SetRenderDrawColor(ecran, 0, 0, 0, 255);
+	SDL_RenderDrawLine(ecran, XBaseRepere, YBaseRepere, XBaseRepere + LONGEUR_AXE_GRAPHE, YBaseRepere);
+	SDL_RenderDrawLine(ecran, XBaseRepere, YBaseRepere, XBaseRepere, YBaseRepere - HAUTEUR_AXE_GRAPHE);
+
+
+}
+
+void ajouterValeurGraphe(int instant, int valeur) {
+	int val1X = INSTANT_TMP * LONGEUR_AXE_GRAPHE / 4000 + LARGEUR * TAILLECASE + 20;
+	int val2X = instant * LONGEUR_AXE_GRAPHE / 4000 + LARGEUR * TAILLECASE + 20;
+	SDL_SetRenderDrawColor(ecran, 255, 0, 0, 255);
+	SDL_RenderDrawLine(ecran, val1X, HAUTEUR_AXE_GRAPHE+20-VALEUR_TMP, val2X, HAUTEUR_AXE_GRAPHE+20-valeur);
+	INSTANT_TMP = instant;
+	VALEUR_TMP = valeur;
+}
+
+void affichePheromones(ListePheromone lp) {
+	for (int i = 0; i < HAUTEUR; i++)
+	{
+		for (int j = 0; j < LARGEUR; j++)
+		{
+			if (lp[i][j].active) {
+				SDL_Rect pheromone;
+				pheromone.x = j * TAILLECASE;
+				pheromone.y = i * TAILLECASE;
+				pheromone.h = TAILLECASE;
+				pheromone.w = TAILLECASE;
+				SDL_SetRenderDrawColor(ecran, 128, 128, 128, 100);
+				SDL_RenderFillRect(ecran, &pheromone);
+			}
+		}
+	}
+}
+
 
 //=================== SDL =======================|
 //===============================================|
@@ -230,241 +276,17 @@ void tournerFourmiDroite(Fourmi& f) {
 	}
 }
 
-void orientationFourmi(Fourmi&f, Map m, int typeMouvement) {
-	if (f.etat == 0) {
-		//orientation simple
-		if (typeMouvement == 0) {
-			f.idOrientation = rand() % 8;
-		}
-		else if (typeMouvement == 1) {
-			/* Distribution 1 */
-
-			//plutôt pour les recherches
-
-
-			int aleaRotation = rand() % 24;
-
-			if (aleaRotation >= 5 && aleaRotation <= 12) {
-				if (rand() % 2) {
-					f.idOrientation++;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation--;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-
-				}
-			}
-			else if (13 >= aleaRotation <= 18) {
-				if (rand() % 2){
-					f.idOrientation+=2;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation-=2;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-			else if (aleaRotation >= 19 && aleaRotation <= 22) {
-				if (rand() % 2) {
-					f.idOrientation += 3;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation -= 3;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-			else if (aleaRotation == 23) {
-				if (rand() % 2) {
-					f.idOrientation += 4;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation -= 4;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-		}
-		else if (typeMouvement == 2) {
-
-
-			/* Distribution 2 */
-
-
-
-			int aleaRotation = rand() % 19;
-
-
-			if (aleaRotation >= 12 && aleaRotation <= 15) {
-				if (rand() % 2) {
-					f.idOrientation += 1;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation -= 1;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-			else if (aleaRotation >= 16 && aleaRotation <= 18) {
-				if (rand() % 2) {
-					f.idOrientation += 2;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation -= 2;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-			else if (aleaRotation == 19) {
-				if (rand() % 2) {
-					f.idOrientation += 3;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation -= 3;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-		}
-		else if (typeMouvement == 3) {
-
-			/* Distribution 3 */
-
-
-			int aleaRotation = rand() % 19;
-
-
-			if (aleaRotation >= 12 && aleaRotation <= 13) {
-				if (rand() % 2) {
-					f.idOrientation += 1;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation -= 1;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-			else if (aleaRotation == 14) {
-				if (rand() % 2) {
-					f.idOrientation += 2;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation -= 2;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-			else if (aleaRotation == 15) {
-				if (rand() % 2) {
-					f.idOrientation += 3;
-					if (f.idOrientation >= 8) {
-						f.idOrientation -= 8;
-					}
-				}
-				else {
-					f.idOrientation -= 3;
-					if (f.idOrientation <= 0) {
-						f.idOrientation += 8;
-					}
-				}
-			}
-		}
+void tournerFourmiGauche(Fourmi& f) {
+	if (f.idOrientation == 0) {
+		f.idOrientation = 7;
 	}
-	else
-	{
-		if (f.X < XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE) {
-				f.idOrientation = 3;
-				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-					f.idOrientation = 5;
-				}
-		}
-		else if (f.X > XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE) {
-				f.idOrientation = 7;
-				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-					f.idOrientation = 0;
-				}
-		}
-		else if (f.X == XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
-				f.idOrientation = 5;
-				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-					f.idOrientation = 7;
-				}
-		}
-		else if (f.X == XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
-				f.idOrientation = 1;
-				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-					f.idOrientation = 2;
-				}
-		}
-		else if (f.X < XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
-				f.idOrientation = 4;
-				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-					f.idOrientation = 5;
-				}
-		}
-		else if (f.X < XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
-				f.idOrientation = 2;
-				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-					f.idOrientation = 1;
-				}
-		}
-		else if (f.X > XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
-				f.idOrientation = 6;
-				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-					f.idOrientation = 5;
-				}
-		}
-		else if (f.X > XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
-				f.idOrientation = 0;
-				if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-					f.idOrientation = 1;
-				}
-		}
-		while (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
-			tournerFourmiDroite(f);
-		}
+	else {
+		f.idOrientation--;
 	}
 }
 
-void deplacerFourmi(Fourmi& f, Map m) {
-	 //si état "normal" faire des mouvements aléatoires
+
+void deplacerFourmi(Fourmi& f, ListePheromone& lp, Map m) {
 	if (caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
 		if (f.idOrientation == 0) {
 			f.X--;
@@ -495,7 +317,274 @@ void deplacerFourmi(Fourmi& f, Map m) {
 			f.X--;
 		}
 	}
+
+	if (f.etat == 1 && !lp[f.Y][f.X].active) {
+		lp[f.Y][f.X].active = true;
+	}
+
+
 }
+
+void deplacementDistribution1(Fourmi &f) {
+	/* Distribution 1 */
+
+	//plutôt pour les recherches
+
+
+	int aleaRotation = rand() % 24;
+
+	if (aleaRotation >= 5 && aleaRotation <= 12) {
+		if (rand() % 2) {
+			f.idOrientation++;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation--;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+
+		}
+	}
+	else if (13 >= aleaRotation <= 18) {
+		if (rand() % 2) {
+			f.idOrientation += 2;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 2;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+	else if (aleaRotation >= 19 && aleaRotation <= 22) {
+		if (rand() % 2) {
+			f.idOrientation += 3;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 3;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+	else if (aleaRotation == 23) {
+		if (rand() % 2) {
+			f.idOrientation += 4;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 4;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+}
+
+void deplacementDistribution2(Fourmi &f){
+	int aleaRotation = rand() % 19;
+
+
+	if (aleaRotation >= 12 && aleaRotation <= 15) {
+		if (rand() % 2) {
+			f.idOrientation += 1;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 1;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+	else if (aleaRotation >= 16 && aleaRotation <= 18) {
+		if (rand() % 2) {
+			f.idOrientation += 2;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 2;
+			if (f.idOrientation <  0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+	else if (aleaRotation == 19) {
+		if (rand() % 2) {
+			f.idOrientation += 3;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 3;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+}
+
+void deplacementDistribution3(Fourmi &f) {
+	int aleaRotation = rand() % 19;
+
+
+	if (aleaRotation >= 12 && aleaRotation <= 13) {
+		if (rand() % 2) {
+			f.idOrientation += 1;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 1;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+	else if (aleaRotation == 14) {
+		if (rand() % 2) {
+			f.idOrientation += 2;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 2;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+	else if (aleaRotation == 15) {
+		if (rand() % 2) {
+			f.idOrientation += 3;
+			if (f.idOrientation > 7) {
+				f.idOrientation -= 8;
+			}
+		}
+		else {
+			f.idOrientation -= 3;
+			if (f.idOrientation < 0) {
+				f.idOrientation += 8;
+			}
+		}
+	}
+}
+
+void deplacementDistribution4(Fourmi &f, ListePheromone& lp, Map m) {
+	bool pheromonePresente = false;
+	for (int i = 0; i < 4; i++) {
+		if (lp[yCaseEnFaceFourmi(f)][xCaseEnFaceFourmi(f)].active) {
+			pheromonePresente = true;
+			deplacerFourmi(f, lp, m);
+			break;
+		}
+	}
+	if (!pheromonePresente) {
+		if (m[yCaseEnFaceFourmi(f)][xCaseEnFaceFourmi(f)].typeCase == 1){
+			deplacementDistribution3(f);
+		}
+	}
+	else {
+	}
+}
+
+void deplacementRetourFourmilliere(Fourmi &f, Map m) {
+	if (f.X < XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE) {
+		f.idOrientation = 3;
+		if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			f.idOrientation = 5;
+		}
+	}
+	else if (f.X > XPOSFOURMILLIERE && f.Y == YPOSFOURMILLIERE) {
+		f.idOrientation = 7;
+		if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			f.idOrientation = 0;
+		}
+	}
+	else if (f.X == XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
+		f.idOrientation = 5;
+		if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			f.idOrientation = 7;
+		}
+	}
+	else if (f.X == XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
+		f.idOrientation = 1;
+		if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			f.idOrientation = 2;
+		}
+	}
+	else if (f.X < XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
+		f.idOrientation = 4;
+		if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			f.idOrientation = 5;
+		}
+	}
+	else if (f.X < XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
+		f.idOrientation = 2;
+		if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			f.idOrientation = 1;
+		}
+	}
+	else if (f.X > XPOSFOURMILLIERE && f.Y < YPOSFOURMILLIERE) {
+		f.idOrientation = 6;
+		if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			f.idOrientation = 5;
+		}
+	}
+	else if (f.X > XPOSFOURMILLIERE && f.Y > YPOSFOURMILLIERE) {
+		f.idOrientation = 0;
+		if (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+			f.idOrientation = 1;
+		}
+	}
+	while (!caseValide(m, xCaseEnFaceFourmi(f), yCaseEnFaceFourmi(f))) {
+		tournerFourmiDroite(f);
+	}
+};
+
+
+void orientationFourmi(Fourmi&f, ListePheromone& lp, Map m, int typeMouvement) {
+	if (f.etat == 0) {
+		if (typeMouvement == 0) {
+			f.idOrientation = rand() % 8;
+		}
+		else if (typeMouvement == 1) {
+			deplacementDistribution1(f);
+		}
+		else if (typeMouvement == 2) {
+			deplacementDistribution2(f);
+		}
+		else if (typeMouvement == 3) {
+			deplacementDistribution3(f);
+		}
+		else if (typeMouvement == 4) {
+			deplacementDistribution4(f, lp, m);
+		}
+	}
+	else
+	{
+		deplacementRetourFourmilliere(f, m);
+	}
+}
+
 
 void initFourmi(Fourmi &f) {
 	f.X = LARGEUR / 2;
@@ -507,6 +596,14 @@ void initFourmi(Fourmi &f) {
 void initColonie(Colonie &c) {
 	for (int i = 0; i < NBFOURMI; i++) {
 		initFourmi(c[i]);
+	}
+}
+
+void initListePheromones(ListePheromone &lp) {
+	for (int i = 0; i < HAUTEUR; i++) {
+		for (int j = 0; j < LARGEUR; j++) {
+			lp[i][j].active = false;
+		}
 	}
 }
 
@@ -547,86 +644,65 @@ int main(int argc, char *argv[]) {
 	initialisationSDL();
 
 	Map map;
-	char nomMap[10] = "map2.ppm";
-	int idMap = 2;
-
+	char nomMap[10] = "map3.ppm";
+	int idMap = 3;
 	initMap(map, nomMap, idMap);
 
 	Colonie c;
 	initColonie(c);
 
+	ListePheromone lp;
+	initListePheromones(lp);
 
-	while (true) {
-		dessinMap(map);
-		for (int i = 0; i < NBFOURMI; i++) {
-			orientationFourmi(c[i], map,3);
-			afficheFourmi(c[i]);
-			deplacerFourmi(c[i], map);
-		}
-		SDL_RenderPresent(ecran);
-		for (int i = 0; i < NBFOURMI; i++) {
-			actionNourriture(c[i], map);
-		}
-		SDL_Delay(50);
-	}
-
+	afficheBaseGraphe();
 
 
 	bool continuer = true;
+	bool simuler = true;
+	int instantT = 0;
 
 	while (continuer) {
 
+		if (simuler) {
+			dessinMap(map);
+			affichePheromones(lp);
+			for (int i = 0; i < NBFOURMI; i++) {
+				orientationFourmi(c[i], lp, map, 4);
+				afficheFourmi(c[i]); 
+				deplacerFourmi(c[i], lp, map);
+			}
+			for (int i = 0; i < NBFOURMI; i++) {
+				actionNourriture(c[i], map);
+			}
+			SDL_Delay(30);
+			ajouterValeurGraphe(instantT, QUANTITE_TOTALE_NOURRITURE);
+			SDL_RenderPresent(ecran);
+			instantT += 5;
+			if (instantT == 4000) {
+				simuler = false;
+			}
+		}
 
 		SDL_Event event;
+		while (SDL_PollEvent(&event)) {//attente d’un évènement
+			switch (event.type) //test du type d’évènement
+			{
+			case SDL_QUIT: //clic sur la croix de fermeture
+						   //on peut enlever SDL_Delay
+				continuer = false;
+				break;
+			case SDL_MOUSEBUTTONUP:
+				int posLig = event.button.y / TAILLECASE;
+				int posCol = event.button.x / TAILLECASE;
+				Case c = map[posLig][posCol];
+				afficheDonneesCase(c);
 
-		SDL_WaitEvent(&event);//attente d’un évènement
-		switch (event.type) //test du type d’évènement
-		{
-		case SDL_QUIT: //clic sur la croix de fermeture
-					   //on peut enlever SDL_Delay
-			continuer = false;
-			break;
-		case SDL_MOUSEBUTTONUP:
-			int posLig = event.button.y / TAILLECASE;
-			int posCol = event.button.x / TAILLECASE;
-			Case c = map[posLig][posCol];
-			afficheDonneesCase(c);
 
-
-			break;
+				break;
+			}
 		}
 	}
 
-
-
-	/*
-	sqlite3*bd;
-	char chemin[] = "fourmis.sqlite";
-	bd = bd_ouvrir(chemin);
-	bd_requeteUpdate(bd, "delete from map");
-	bd_requeteUpdate(bd, "insert into map values (1,'nomTest',50,50)");
-	int x = 2, largeur = 20, hauteur = 30;
-	char name[10] = "map";
-	ostringstream req;
-	req.str("");
-	req << "insert into map values (" << x << ",'" << name << "'," << largeur << "," << hauteur << ")";
-	bd_requeteUpdate(bd, req.str().c_str());
-	int L, C;
-	char ***t = NULL;
-	bd_requeteSelect(bd, "select * from map", t, L, C);
-	for (int i = 0; i < L; i++) {
-	for (int j = 0; j < C; j++) {
-	cout << t[i][j] << "|";
-	}
-	cout << endl;
-	}
-	bd_detruireTab(t, L, C);
-	bd_fermer;
-	*/
-
-
-
-	system("pause");
 	destructionSDL();
 
 	return EXIT_SUCCESS;

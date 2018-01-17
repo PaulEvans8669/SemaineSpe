@@ -15,9 +15,11 @@ TTF_Font*font = NULL;
 const int HAUTEUR = 70;
 const int LARGEUR = 70;
 const int TAILLECASE = 8;
-const int NBFOURMI = 50;
+const int NBFOURMI = 100;
 const int XPOSFOURMILLIERE = LARGEUR / 2;
 const int YPOSFOURMILLIERE = HAUTEUR / 2;
+const int LONGEUR_AXE_GRAPHE = LARGEUR * TAILLECASE - 40;
+const int HAUTEUR_AXE_GRAPHE = HAUTEUR * TAILLECASE - 40;
 
 int QUANTITE_TOTALE_NOURRITURE = 0;
 
@@ -45,3 +47,14 @@ typedef struct Fourmi {
 } Fourmi;
 
 typedef Fourmi Colonie[NBFOURMI];
+
+typedef struct Pheromone {
+	bool active;
+} Pheromone;
+
+typedef Pheromone ListePheromone[HAUTEUR][LARGEUR];
+
+// ==========/\/\/\/\/========== GRAPHE
+
+int INSTANT_TMP = 0;
+int VALEUR_TMP = 0;
