@@ -90,7 +90,7 @@ void initialisationSDL() {
 
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		cout << " Echec à l’ouverture ";
+		cout << " Echec Ã  lâ€™ouverture ";
 	}
 
 	TTF_Init();
@@ -148,7 +148,7 @@ void dessinCase(Case&c) {
 	int R = c.R;
 	int G = c.G;
 	int B = c.B;
-	//DEBUG pour afficher les différents types de cases
+	//DEBUG pour afficher les diffÃ©rents types de cases
 	/*
 	if (c.typeCase == 0) {
 	R = G = B = 255;
@@ -328,7 +328,7 @@ void deplacerFourmi(Fourmi& f, ListePheromone& lp, Map m) {
 void deplacementDistribution1(Fourmi &f) {
 	/* Distribution 1 */
 
-	//plutôt pour les recherches
+	//plutÃ´t pour les recherches
 
 
 	int aleaRotation = rand() % 24;
@@ -497,12 +497,8 @@ void deplacementDistribution4(Fourmi &f, ListePheromone& lp, Map m) {
 			break;
 		}
 	}
-	if (!pheromonePresente) {
-		if (m[yCaseEnFaceFourmi(f)][xCaseEnFaceFourmi(f)].typeCase == 1){
-			deplacementDistribution3(f);
-		}
-	}
-	else {
+	if (pheromonePresente) {
+		
 	}
 }
 
@@ -684,8 +680,8 @@ int main(int argc, char *argv[]) {
 		}
 
 		SDL_Event event;
-		while (SDL_PollEvent(&event)) {//attente d’un évènement
-			switch (event.type) //test du type d’évènement
+		while (SDL_PollEvent(&event)) {//attente dâ€™un Ã©vÃ¨nement
+			switch (event.type) //test du type dâ€™Ã©vÃ¨nement
 			{
 			case SDL_QUIT: //clic sur la croix de fermeture
 						   //on peut enlever SDL_Delay
