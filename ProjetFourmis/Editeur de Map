@@ -1,0 +1,209 @@
+#include <iostream>
+#include "config_sdl.h"
+
+using namespace std;
+
+
+const int nbCase = 120;
+const int TAILLE_CASE = 5;
+const int LARGEUR_FENETRE = nbCase * TAILLE_CASE / 2 * 3; //largeur = 900 
+
+SDL_Window*window = NULL;
+SDL_Renderer*rendu = NULL;
+TTF_Font*font = NULL;
+
+typedef struct Case {
+	int x;
+	int y;
+	int R;
+	int G;
+	int B;
+};
+typedef Case Grille[nbCase][nbCase];
+
+void initialisationSDL() {
+
+	
+
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		cout << " Echec à l’ouverture ";
+	}
+
+	TTF_Init();
+	font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 25);
+
+
+	window = SDL_CreateWindow("Editeur de map",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		LARGEUR_FENETRE, 
+		nbCase*	TAILLE_CASE,
+		SDL_WINDOW_SHOWN);
+
+	if (window == NULL) {
+		cout << "erreur ouverture fenetre";
+	}
+
+	rendu = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_RenderPresent(rendu);
+
+}
+
+void destructionSDL() {
+
+	SDL_DestroyRenderer(rendu);
+	SDL_DestroyWindow(window);   //equivalent du delete
+
+	TTF_CloseFont(font); //on ferme la font
+	TTF_Quit(); //on quitte la TTF
+
+				//fermeture de la SDL
+	SDL_Quit();
+}
+
+void bouton_terrain(SDL_Renderer *rendu) {
+	for (int i = 0; i < nbCase; i++) {
+		for (int j = 0; j < nbCase; j++) {
+			SDL_Rect BT;
+
+			BT.x = nbCase * TAILLE_CASE;
+			BT.y = 200;
+			BT.w = 300;
+			BT.h = 75;
+
+			SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+			SDL_RenderFillRect(rendu, &BT);
+			SDL_RenderPresent(rendu);
+			
+			SDL_RenderPresent(rendu);
+		}
+	}
+}
+
+void bouton_nourriture(SDL_Renderer *rendu) {
+	for (int i = 0; i < nbCase; i++) {
+		for (int j = 0; j < nbCase; j++) {
+			SDL_Rect BN;
+
+			BN.x = nbCase * TAILLE_CASE;
+			BN.y = 300;
+			BN.w = 300;
+			BN.h = 75;//
+			SDL_SetRenderDrawColor(rendu, 255, 0, 0, 255);
+			SDL_RenderFillRect(rendu, &BN);
+			SDL_RenderPresent(rendu);
+		}
+	}
+}
+
+
+void bouton_obstacle(SDL_Renderer *rendu) {
+	for (int i = 0; i < nbCase; i++) {
+		for (int j = 0; j < nbCase; j++) {
+			SDL_Rect BO;
+
+			BO.x = nbCase * TAILLE_CASE;
+			BO.y = 400;
+			BO.w = 300;
+			BO.h = 75;
+			SDL_SetRenderDrawColor(rendu, 0, 0, 255, 255);
+			SDL_RenderFillRect(rendu, &BO);
+			SDL_RenderPresent(rendu);
+		}
+	}
+}
+
+void bouton_save(SDL_Renderer *rendu) {
+	for (int i = 0; i < nbCase; i++) {
+		for (int j = 0; j < nbCase; j++) {
+			SDL_Rect BS;
+
+			BS.x = nbCase * TAILLE_CASE;
+			BS.y = 500;
+			BS.w = 300;
+			BS.h = 75;
+			SDL_SetRenderDrawColor(rendu, 255, 255, 255, 255);
+			SDL_RenderFillRect(rendu, &BS);
+			SDL_RenderPresent(rendu);
+		}
+	}
+}
+
+
+void init_case(SDL_Renderer* rendu,Case c) {
+	SDL_Rect grille;
+
+	grille.x = 0;
+	grille.y = 0;
+	grille.w = TAILLE_CASE;
+	grille.h = TAILLE_CASE;
+	SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+	SDL_RenderFillRect(rendu, &grille);
+
+}
+
+void init_Grille_SDL(SDL_Renderer *rendu, Grille g,Case c) {
+	for (int i = 0; i < nbCase; i++) {
+		for (int j = 0; j < nbCase; j++) {
+			init_case(rendu, c);
+			g[i][j].x = i * TAILLE_CASE;
+			g[i][j].y = j * TAILLE_CASE;
+		}
+	}
+}
+
+
+
+
+
+int main(int argn, char* argv[]) {//entête imposée
+	initialisationSDL();
+	init_Grille_SDL(rendu);
+
+	/*bouton_terrain(rendu);
+	bouton_nourriture(rendu);
+	bouton_obstacle(rendu);
+	bouton_save(rendu);*/
+
+	
+
+	bool continuer = true; //booléen fin de programme
+	SDL_Event event;//gestion des évènements souris/clavier,
+					//SDL_Event est de type struct
+	while (continuer)
+	{
+		SDL_WaitEvent(&event);//attente d’un évènement
+		switch (event.type) //test du type d’évènement
+		{
+		case SDL_QUIT: //clic sur la croix de fermeture
+					   //on peut enlever SDL_Delay
+			continuer = false;
+			break;
+			case SDL_MOUSEBUTTONUP://appui souris
+				if (event.button.button == SDL_BUTTON_LEFT) { //si on clique bouton gauche
+					SDL_Rect BT;
+					
+					BT.x = nbCase * TAILLE_CASE;
+					BT.y = 200;
+					BT.w = 300;
+					BT.h = 75;
+
+					SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255);
+					SDL_RenderFillRect(rendu, &BT);
+					SDL_RenderPresent(rendu);
+
+					SDL_RenderPresent(rendu);
+
+					if (event.button.x>BT.x && event.button.x<BT.x + BT.w && event.button.y>BT.y && event.button.y<BT.y + BT.h) { //dans le rectangle
+						
+						SDL_SetRenderDrawColor(rendu, 0, 255, 0, 255); //on définit la couleur verte
+						SDL_RenderDrawRect(rendu, &BT); //on trace un rectangle vide
+						}
+						SDL_RenderPresent(rendu);//on rafraichit
+			}
+			break;
+		}
+	}
+	destructionSDL();
+	return 0;
+}
